@@ -23,7 +23,7 @@ class WeatherProvider with ChangeNotifier {
     }
   }
 
-  Future<void> searchWeather(BuildContext context, String city) async {
+  Future<bool> searchWeather(BuildContext context, String city) async {
     isLoading = true;
     notifyListeners();
 
@@ -35,18 +35,23 @@ class WeatherProvider with ChangeNotifier {
       if (isAlreadyAdded) {
         // ignore: use_build_context_synchronously
         _showErrorSnackBar(context, 'City already added');
+        isLoading = false;
+        notifyListeners();
+        return false;
       } else {
         _weatherList.insert(0, response);
         await _saveWeatherList();
+        isLoading = false;
         notifyListeners();
+        return true;
       }
     } else {
       // ignore: use_build_context_synchronously
       _showErrorSnackBar(context, 'Failed to load weather data');
+      isLoading = false;
+      notifyListeners();
+      return false;
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> refreshWeather() async {

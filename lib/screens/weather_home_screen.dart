@@ -59,11 +59,10 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                   onPressed: () async {
                     final city = _controller.text;
                     if (city.isNotEmpty) {
-                      await weatherProvider.searchWeather(context, city);
-                      await forecastProvider.fetchForecast(city);
-
-                      if (weatherProvider.weatherList.isNotEmpty &&
-                          forecastProvider.forecastList.isNotEmpty) {
+                      bool isSuccess =
+                          await weatherProvider.searchWeather(context, city);
+                      if (isSuccess) {
+                        await forecastProvider.fetchForecast(city);
                         final weather = weatherProvider.weatherList[0];
                         final forecast1 = forecastProvider.forecastList[0];
 
@@ -88,15 +87,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
                             ),
                           );
                         }
-                      } else {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content:
-                                Text('Weather data not available for "$city"'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
                       }
                       _controller.clear();
                     }
